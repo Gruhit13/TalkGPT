@@ -3,6 +3,8 @@ from torch.utils.data import Dataset, DataLoader
 from preprocess import audio_to_melspec, collate_audio_data
 from datasets import load_dataset
 import numpy as np
+from tqdm.auto import tqdm
+import time
 
 class TalkGPTDataset(Dataset):
     def __init__(
@@ -53,8 +55,11 @@ if __name__ == "__main__":
                              split="dev.clean", n_fft=1024, 
                              hop_length=128, n_mels=80)
     
-    dataloader = DataLoader(dataset, batch_size=4, collate_fn=collate_audio_data)
+    dataloader = DataLoader(dataset, batch_size=16, collate_fn=collate_audio_data,
+                            drop_last=True)
 
-    for batch in dataloader:
-        print({k: v.shape for k, v in batch.items()})
-        break
+    start = time.time()
+    for batch in tqdm(dataloader, total=len(dataloader)-1):
+        pass
+    end = time.time()
+    print("Time taken: ", end-start)
