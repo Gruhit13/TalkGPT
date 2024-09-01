@@ -34,5 +34,5 @@ class TalkGPT(nn.Module):
 
         stop_label = self.stop_token_linear(x)
 
-        return mel_spec, T.sigmoid(stop_label)
+        return mel_spec, stop_label
         
