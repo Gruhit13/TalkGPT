@@ -13,11 +13,11 @@ class ModelConfig:
     n_heads: int = 4
     attn_dropout: float = 0.1
     ffn_dropout: float = 0.1
-    n_blocks: int = 4
+    n_blocks: int = 8
 
     kernel_size: int = 5
     padding: str = "same"
     stride: int = 1
-    n_postmelblock: int = 4
+    n_postmelblock: int = 5
     postmel_hidden_dim: int = n_mels * 4
     postmel_dropout: int = 0.1

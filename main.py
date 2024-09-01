@@ -3,6 +3,7 @@ from nnet.config import ModelConfig
 from utils.preprocess import preprocess_data
 import torch as T
 from nnet.model import TalkGPT
+from torchsummary import summary
 
 
 if __name__ == "__main__":
@@ -25,7 +26,9 @@ if __name__ == "__main__":
     inp = T.randn(2, 128, config.n_mels)
     print("Input shape: ", inp.shape)
 
-    (mel_spec_oup, stop_label) = model(inp)
+    model_summary = summary(model, input_data=inp)
 
-    print("Mel Spec oup: ", mel_spec_oup.shape)
-    print("Stop Label: ", stop_label.shape)
+    with open("model_summary.txt", "w") as summary_writer:
+        summary_writer.write("="*20+"| Model Summary |" + "="*20)
+        summary_writer.write("\n")
+        summary_writer.write(model_summary.__str__())
