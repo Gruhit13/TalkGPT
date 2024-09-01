@@ -35,4 +35,20 @@ class TalkGPT(nn.Module):
         stop_label = self.stop_token_linear(x)
 
         return mel_spec, stop_label
-        
+    
+    def get_mask(self, x, mask: Optional[T.Tensor] = None) -> T.Tensor:
+        seq_len = x.size(1)
+        causal_mask = T.tril(T.ones(1, seq_len, seq_len)).to(x.device)
+
+        if mask is not None:
+            assert len(mask.shape) == 2, "Mask must be of shape [B, Seq_len]"
+            # [B, seq_len] => [B, 1, seq_len, 1]
+            mask = mask.unsqueeze(1).unsqueeze(3)
+            causal_mask = mask * causal_mask
+
+            causal_mask = (1 - causal_mask).bool()
+            return causal_mask
+        else:
+            causal_mask = causal_mask.repeat(x.size(0), 1, 1)
+            causal_mask = (1 - causal_mask.unsqueeze(1)).bool()
+            return causal_mask

@@ -21,3 +21,6 @@ class ModelConfig:
     n_postmelblock: int = 5
     postmel_hidden_dim: int = n_mels * 4
     postmel_dropout: int = 0.1
+
+    lr: float = 1e-4
+    warmup_steps: int = 10000
