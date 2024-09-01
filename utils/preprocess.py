@@ -56,12 +56,12 @@ def preprocess_data(
     seq_len = mel_spec.shape[-1]
 
     mel_spec = F.pad(T.tensor(mel_spec), (0, max_melspec_len - seq_len), value=0)
-    mask = np.zeros((1, max_melspec_len,))
-    mask[:, :seq_len] = 1
-
+    
     # masked_fill fill the value of the self tensor where the mask is True
-    # hence for that reason the mask needs to be true where the sequence is padded 
-    mask = 1 - mask
+    # hence for that reason the mask needs to be true where the sequence is padded
+    mask = np.ones((1, max_melspec_len))
+    mask[:, :seq_len] = 0
+
 
     stop_token_label = deepcopy(mask)
     stop_token_label[:, -1] = 1
