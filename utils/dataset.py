@@ -1,4 +1,5 @@
 import torch as T
+import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
 from preprocess import audio_to_melspec, collate_audio_data
 from datasets import load_dataset
@@ -15,6 +16,7 @@ class TalkGPTDataset(Dataset):
         n_fft: int,
         hop_length: int,
         n_mels: int,
+        max_melspec_len: int
     ):
         self.dataset = load_dataset(dataset, name, split=split).select(np.arange(512))
         self.dataset = self.dataset.map(
@@ -28,6 +30,7 @@ class TalkGPTDataset(Dataset):
         self.n_fft = n_fft
         self.hop_length = hop_length
         self.n_mels = n_mels
+        self.max_melspec_len = max_melspec_len
 
     def __flatten_map(self, row) -> dict:
         return {
@@ -44,7 +47,8 @@ class TalkGPTDataset(Dataset):
         mel_spec = audio_to_melspec(audio, sampling_rate, self.n_fft, self.hop_length, self.n_mels)
         seq_len = mel_spec.shape[-1]
 
-        return (mel_spec, seq_len)
+        mel_spec = F.pad(mel_spec, (0, self.max_melspec_len-seq_len), value=0)
+        return mel_spec
     
     def __len__(self) -> int:
         return len(self.dataset)
