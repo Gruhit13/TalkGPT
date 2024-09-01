@@ -6,6 +6,7 @@ import torch.nn.functional as F
 from torch.utils.data import DataLoader
 from datasets import load_dataset
 from tqdm.auto import tqdm
+from copy import deepcopy
 
 def audio_to_melspec(
         audio: np.array, 
@@ -58,7 +59,11 @@ def preprocess_data(
     mask = np.zeros((1, max_melspec_len,))
     mask[:, :seq_len] = 1
 
-    stop_token_label = 1 - mask
+    # masked_fill fill the value of the self tensor where the mask is True
+    # hence for that reason the mask needs to be true where the sequence is padded 
+    mask = 1 - mask
+
+    stop_token_label = deepcopy(mask)
     stop_token_label[:, -1] = 1
 
     return {
