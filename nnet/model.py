@@ -38,7 +38,10 @@ class TalkGPT(nn.Module):
     
     def get_mask(self, x, mask: Optional[T.Tensor] = None) -> T.Tensor:
         seq_len = x.size(1)
-        causal_mask = T.tril(T.ones(1, seq_len, seq_len)).to(x.device)
+        
+        # We will set true at the place which is to be masked hence the lower 
+        # trinagle is converter to upper triangle
+        causal_mask = T.triu(T.ones(1, seq_len, seq_len), diagonal=1).to(x.device)
 
         if mask is not None:
             assert len(mask.shape) == 2, "Mask must be of shape [B, Seq_len]"
@@ -46,9 +49,7 @@ class TalkGPT(nn.Module):
             mask = mask.unsqueeze(1).unsqueeze(3)
             causal_mask = mask * causal_mask
 
-            causal_mask = (1 - causal_mask).bool()
-            return causal_mask
+            return causal_mask.bool()
         else:
             causal_mask = causal_mask.repeat(x.size(0), 1, 1)
-            causal_mask = (1 - causal_mask.unsqueeze(1)).bool()
             return causal_mask
