@@ -3,10 +3,10 @@ class ModelConfig:
     n_fft: int = 2048
     hop_length: int = int(n_fft / 8)
     win_length: int = int(n_fft / 2)
-    n_mels: int = 80
+    n_mels: int = 128
 
 
-    d_model: int = 128
+    d_model: int = 256
     hidden_dim: int = d_model * 4
     max_seq_len: int = 512
 
